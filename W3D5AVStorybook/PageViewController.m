@@ -28,10 +28,11 @@
   self.dataArray = [[NSMutableArray alloc] init];
   
   //Build data array
-  SinglePageData *dataObject = [[SinglePageData alloc] initWithImageName:[@(self.dataArray.count + 1) stringValue]];
-  [self.dataArray addObject:dataObject];
-  SinglePageData *dataObject2 = [[SinglePageData alloc] initWithImageName:[@(self.dataArray.count + 1) stringValue]];
-  [self.dataArray addObject:dataObject2];
+  [self addDataObjectToArray];
+  [self addDataObjectToArray];
+  [self addDataObjectToArray];
+  [self addDataObjectToArray];
+  [self addDataObjectToArray];
   
   //Create view controller
   StoryPartViewController *initialVC = [self.storyboard instantiateViewControllerWithIdentifier:@"StoryPartViewController"];
@@ -83,5 +84,13 @@
     return self.dataArray[self.currentIndex];
   }
   return nil;
+}
+
+//MARK: Helper methods
+-(void)addDataObjectToArray{
+//  SinglePageData *dataObject = [[SinglePageData alloc] initWithImageName:[@(self.dataArray.count + 1) stringValue]];
+  SinglePageData *dataObject = [[SinglePageData alloc] initWithImageName:@"noImage"];
+  dataObject.pageTitle = [NSString stringWithFormat:@"Page %lu", self.dataArray.count + 1];
+  [self.dataArray addObject:dataObject];
 }
 @end

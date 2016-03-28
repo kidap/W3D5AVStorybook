@@ -11,6 +11,7 @@
 @interface SinglePageData : NSObject
 @property (nonatomic, strong) UIImage *image;
 @property (nonatomic, strong) NSURL *audioURL;
+@property (nonatomic, copy) NSString *pageTitle;
 
 -(instancetype)initWithImageName:(NSString *)name;
 @end

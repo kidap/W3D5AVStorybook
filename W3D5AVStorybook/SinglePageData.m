@@ -14,6 +14,7 @@
   if(self = [super init]){
     _image = [UIImage imageNamed:name];
     _audioURL = [[NSURL alloc] init];
+    _pageTitle = @"";
   }
   
   return self;

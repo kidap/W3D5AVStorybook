@@ -22,18 +22,24 @@
 static int totalCount;
 
 -(void)viewDidLoad{
-  [self.imageView setImage: self.dataObject.image];
-
-  //[self prepareAudioRecorder];
-  [self prepareAudioPlayer];
-  
-  UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapped:)];
-  [self.imageView setUserInteractionEnabled: YES];
-  [self.imageView addGestureRecognizer:tapGestureRecognizer];
+  [self prepareView];
+  [self prepareGestures];
 }
 -(void)viewWillDisappear:(BOOL)animated{
   [self.audioRecorder stop];
   [self.audioPlayer stop];
+}
+//MARK: Preparation
+-(void)prepareView{
+  self.navigationItem.leftBarButtonItem.title = @"Start Recording";
+  [self.imageView setImage: self.dataObject.image];
+  [self prepareAudioPlayer];
+  [self.navigationItem setTitle:_dataObject.pageTitle];
+}
+-(void)prepareGestures{
+  UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapped:)];
+  [self.imageView setUserInteractionEnabled: YES];
+  [self.imageView addGestureRecognizer:tapGestureRecognizer];
 }
 
 //MARK: Image methods
@@ -95,20 +101,21 @@ static int totalCount;
   if(!self.audioRecorder.recording){
     NSLog(@"Start recording");
     [self.audioRecorder record];
+    self.navigationItem.leftBarButtonItem.title = @"Stop Recording";
   } else{
     NSLog(@"Stop recording");
     [self.audioRecorder stop];
     [self saveRecordedAudio];
+    self.navigationItem.leftBarButtonItem.title = @"Start Recording";
   }
-  
 }
 -(void) prepareAudioRecorder{
   if (self.audioRecorder == nil){
-    
     NSArray *folderPathArray = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *folderPath = folderPathArray[0];
     NSString *saveAudioTo = [NSString stringWithFormat:@"%@/test%d.m4a",folderPath,totalCount];
     NSURL *saveToURL = [NSURL fileURLWithPath:saveAudioTo];
+    totalCount++;
     
     NSMutableDictionary *recordSetting = [[NSMutableDictionary alloc] init];
     [recordSetting setValue:[NSNumber numberWithInt:kAudioFormatMPEG4AAC] forKey:AVFormatIDKey];
@@ -163,12 +170,10 @@ static int totalCount;
   }
 }
 
-
 //MARK: Gestures
 -(void)imageTapped:(UITapGestureRecognizer *)recognizer{
   if (recognizer.state == UIGestureRecognizerStateEnded) {
     [self prepareAudioPlayer];
-    
     if (!self.audioPlayer.playing) {
       NSLog(@"Play audio");
       [self.audioPlayer play];
@@ -182,15 +187,14 @@ static int totalCount;
 //MARK: Helper methods
 -(void)setDataObject:(SinglePageData *)dataObject{
   _dataObject = dataObject;
+  
   if (self.imageView == nil){
     self.imageView = [[UIImageView alloc] init];
   }
   [self.imageView setImage: dataObject.image];
-  
+
   [self prepareAudioPlayer];
+  
+  [self.navigationItem setTitle: dataObject.pageTitle];
 }
-
-
-
-
 @end

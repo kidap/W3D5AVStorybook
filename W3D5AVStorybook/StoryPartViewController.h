@@ -13,5 +13,6 @@
 @property (nonatomic, strong) IBOutlet UIImageView *imageView;
 @property (nonatomic, assign) NSInteger index;
 @property (nonatomic, strong) SinglePageData *dataObject;
+@property (strong, nonatomic) IBOutlet UINavigationItem *navigationItem;
 
 @end
