@@ -14,6 +14,8 @@
 
 
 @interface StoryPartViewController()<UIImagePickerControllerDelegate,AVAudioRecorderDelegate, AVAudioPlayerDelegate, UIActionSheetDelegate, UINavigationControllerDelegate>
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *recordButton;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem *playPauseButton;
 @property (nonatomic, strong) AVAudioPlayer *audioPlayer;
 @property (nonatomic, strong) AVAudioRecorder *audioRecorder;
 @end
@@ -31,7 +33,8 @@ static int totalCount;
 }
 //MARK: Preparation
 -(void)prepareView{
-  self.navigationItem.leftBarButtonItem.title = @"Start Recording";
+  self.recordButton.title = @"Start Recording";
+  [self.playPauseButton setStyle:UIBarButtonSystemItemPlay];
   [self.imageView setImage: self.dataObject.image];
   [self prepareAudioPlayer];
   [self.navigationItem setTitle:_dataObject.pageTitle];
@@ -94,21 +97,6 @@ static int totalCount;
 }
 
 //MARK: Recording Audio methods
-- (IBAction)microphoneButtonClicked:(id)sender {
-  NSLog(@"Microphone clicked");
-  [self prepareAudioRecorder];
-  
-  if(!self.audioRecorder.recording){
-    NSLog(@"Start recording");
-    [self.audioRecorder record];
-    self.navigationItem.leftBarButtonItem.title = @"Stop Recording";
-  } else{
-    NSLog(@"Stop recording");
-    [self.audioRecorder stop];
-    [self saveRecordedAudio];
-    self.navigationItem.leftBarButtonItem.title = @"Start Recording";
-  }
-}
 -(void) prepareAudioRecorder{
   if (self.audioRecorder == nil){
     NSArray *folderPathArray = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -156,31 +144,49 @@ static int totalCount;
       self.audioPlayer = [self.audioPlayer initWithContentsOfURL:self.dataObject.audioURL error:nil];
     }
     [self.audioPlayer prepareToPlay];
+    self.audioPlayer.delegate = self;
     self.audioPlayer.meteringEnabled = YES;
+    [self.playPauseButton setEnabled:YES];
     
     NSLog(@"Instantiate Player");
     NSLog(@"Using file %@", self.audioPlayer.url);
   } else{
+    [self.playPauseButton setEnabled:NO];
     NSLog(@"No audio currently saved");
   }
 }
 -(void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag{
   if (flag) {
+    [self.recordButton setEnabled:YES];
     NSLog(@"Finished playing");
+  }
+}
+//MARK: Actions{
+- (IBAction)toggleAudio:(id)sender {
+  [self playPauseAudio];
+}
+
+- (IBAction)microphoneButtonClicked:(id)sender {
+  NSLog(@"Microphone clicked");
+  [self prepareAudioRecorder];
+  
+  if(!self.audioRecorder.recording){
+    NSLog(@"Start recording");
+    [self.audioRecorder record];
+    self.recordButton.title = @"Stop Recording";
+  } else{
+    NSLog(@"Stop recording");
+    [self.audioRecorder stop];
+    [self saveRecordedAudio];
+    self.recordButton.title = @"Start Recording";
+    [self.playPauseButton setEnabled:YES];
   }
 }
 
 //MARK: Gestures
 -(void)imageTapped:(UITapGestureRecognizer *)recognizer{
   if (recognizer.state == UIGestureRecognizerStateEnded) {
-    [self prepareAudioPlayer];
-    if (!self.audioPlayer.playing) {
-      NSLog(@"Play audio");
-      [self.audioPlayer play];
-    } else{
-      NSLog(@"Stop audio");
-      [self.audioPlayer stop];
-    }
+    [self playPauseAudio];
   }
 }
 
@@ -196,5 +202,19 @@ static int totalCount;
   [self prepareAudioPlayer];
   
   [self.navigationItem setTitle: dataObject.pageTitle];
+}
+-(void)playPauseAudio{
+  [self prepareAudioPlayer];
+  if (!self.audioPlayer.playing) {
+    NSLog(@"Play audio");
+    [self.audioPlayer play];
+    [self.playPauseButton setStyle:UIBarButtonSystemItemPause];
+    [self.recordButton setEnabled:NO];
+  } else{
+    NSLog(@"Stop audio");
+    [self.audioPlayer stop];
+    [self.playPauseButton setStyle:UIBarButtonSystemItemPlay];
+    [self.recordButton setEnabled:YES];
+  }
 }
 @end

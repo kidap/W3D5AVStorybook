@@ -5,6 +5,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
     </dependencies>
     <scenes>
         <!--Page View Controller-->
@@ -35,14 +36,21 @@
                             </imageView>
                             <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="kt4-Z1-XuT">
                                 <rect key="frame" x="0.0" y="20" width="600" height="44"/>
-                                <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <items>
                                     <navigationItem id="pge-E0-zSX">
-                                        <barButtonItem key="leftBarButtonItem" title="Record" id="N1C-KT-eMh">
-                                            <connections>
-                                                <action selector="microphoneButtonClicked:" destination="MJP-J2-HV0" id="acO-iS-BS7"/>
-                                            </connections>
-                                        </barButtonItem>
+                                        <leftBarButtonItems>
+                                            <barButtonItem title="Record" id="N1C-KT-eMh">
+                                                <connections>
+                                                    <action selector="microphoneButtonClicked:" destination="MJP-J2-HV0" id="acO-iS-BS7"/>
+                                                </connections>
+                                            </barButtonItem>
+                                            <barButtonItem systemItem="play" id="BbR-1V-pZV">
+                                                <connections>
+                                                    <action selector="toggleAudio:" destination="MJP-J2-HV0" id="Za3-bd-8CC"/>
+                                                </connections>
+                                            </barButtonItem>
+                                        </leftBarButtonItems>
                                         <barButtonItem key="rightBarButtonItem" systemItem="camera" id="yYe-4B-9Xd">
                                             <connections>
                                                 <action selector="cameraButtonClicked:" destination="MJP-J2-HV0" id="gVg-AG-RfS"/>
@@ -62,9 +70,16 @@
                             <constraint firstItem="kt4-Z1-XuT" firstAttribute="top" secondItem="JMB-yG-HkS" secondAttribute="top" constant="20" id="yQe-aq-n9n"/>
                         </constraints>
                     </view>
+                    <toolbarItems>
+                        <barButtonItem width="42" style="plain" systemItem="fixedSpace" id="Dlf-c0-Zgx"/>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="ZRl-PQ-luI"/>
+                    </toolbarItems>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="imageView" destination="bQE-rP-Azj" id="Tca-9M-7Uh"/>
                         <outlet property="navigationItem" destination="pge-E0-zSX" id="boC-GF-l3P"/>
+                        <outlet property="playPauseButton" destination="BbR-1V-pZV" id="hyH-Gg-Fer"/>
+                        <outlet property="recordButton" destination="N1C-KT-eMh" id="bPi-f8-4vL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="asY-Xh-v1o" userLabel="First Responder" sceneMemberID="firstResponder"/>
